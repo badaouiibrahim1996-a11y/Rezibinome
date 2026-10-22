@@ -1,1 +1,26 @@
-
+name: Build site
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Unzip project
+        run: unzip -q rezibinome-dz.zip -d work
+      - name: Install and build
+        working-directory: work/rezibinome-dz
+        env:
+          VITE_SUPABASE_URL: https://vfpsgfhfkzbxlrgzrxhz.supabase.co
+          VITE_SUPABASE_ANON_KEY: sb_publishable_IG2301SU6M6DJXrBtzygWw_k1e64TQR
+        run: |
+          npm install
+          npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-vercel
+          path: work/rezibinome-dz/dist/public
