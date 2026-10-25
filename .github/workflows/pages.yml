@@ -26,13 +26,19 @@ jobs:
           node-version: 22
       - name: Unzip project
         run: unzip -q rezibinome-dz.zip -d work
-      - name: Install and build
+      - name: Install
+        working-directory: work/rezibinome-dz
+        run: npm install
+      - name: Typecheck (résultat visible, ne bloque pas le déploiement)
+        working-directory: work/rezibinome-dz
+        continue-on-error: true
+        run: npm run typecheck
+      - name: Build
         working-directory: work/rezibinome-dz
         env:
           VITE_SUPABASE_URL: https://vfpsgfhfkzbxlrgzrxhz.supabase.co
           VITE_SUPABASE_ANON_KEY: sb_publishable_IG2301SU6M6DJXrBtzygWw_k1e64TQR
         run: |
-          npm install
           npm run build -- --base=/${{ github.event.repository.name }}/
           cp dist/public/index.html dist/public/404.html
       - uses: actions/configure-pages@v5
